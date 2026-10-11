@@ -1,0 +1,40 @@
+# agent-guard ruleset (optional). Copy to one of:
+#   $AGENT_GUARD_CONFIG                 (any path)
+#   ./guard.yaml  (next to guard.py)    guard.json also works (no PyYAML needed)
+#   ~/.config/agent-guard/guard.yaml
+# Built-in defaults already block: git push / reset --hard / clean -f, sudo,
+# rm -rf outside the workdir, curl/wget/ssh/scp to non-allowlisted hosts, any
+# .env / configurations/env access, and dangerous fabric_exec code. This file
+# only ADDS to or RELAXES those defaults.
+
+# Hosts curl/wget/ssh/scp/rsync may reach (everything else is denied):
+allowed_hosts: []
+#  - api.github.com
+
+# Extra paths to always deny (fnmatch globs), on top of the built-in .env rule:
+protected_path_globs: []
+#  - "configurations/env/**"
+#  - "**/*.pem"
+#  - "secrets/**"
+
+# Extra regexes denied inside bash commands:
+deny_bash_patterns: []
+#  - "\\bkubectl\\s+delete\\b"
+
+# Regexes matched against the TOOL NAME (deny network-ish extension tools):
+deny_tool_patterns: []
+#  - "(?i)web"
+#  - "(?i)fetch"
+
+# Regexes denied in BOTH bash commands AND fabric_exec code:
+extra_deny_patterns: []
+
+# Disable a built-in rule by id (use sparingly):
+#   git_push | git_reset_hard | git_clean_force | sudo | rm_rf_outside |
+#   net_tools | env_files | fabric_exec
+allow_rules: []
+#  - git_push
+
+# Tool names whose `code` argument is inspected as fabric_exec JS:
+fabric_tools:
+  - fabric_exec

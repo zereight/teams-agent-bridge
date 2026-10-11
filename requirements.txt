@@ -1,0 +1,21 @@
+# ---- core (all platforms) ----
+PyYAML>=6.0
+pyperclip>=1.8
+
+# ---- backend A: macOS Accessibility (pyobjc) ----
+pyobjc-framework-ApplicationServices>=10.1; sys_platform == "darwin"
+pyobjc-framework-Cocoa>=10.1; sys_platform == "darwin"
+pyobjc-framework-Quartz>=10.1; sys_platform == "darwin"
+
+# ---- backend A: Windows UI Automation (optional, Windows only) ----
+pywinauto>=0.6.8; sys_platform == "win32"
+
+# ---- backend B: vision fallback (only needed if backend: vision) ----
+mss>=9.0
+pyautogui>=0.9.54
+Pillow>=10.0
+pygetwindow>=0.0.9; sys_platform == "win32"
+anthropic>=0.40
+
+# ---- tests ----
+pytest>=8.0

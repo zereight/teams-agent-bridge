@@ -1,0 +1,103 @@
+# ================================================================
+# Generic macOS example (new Teams, com.microsoft.teams2).
+# Copy to config.yaml (gitignored) and fill in the ★ lines:
+#     cp config.mac.yaml config.yaml
+# Never put secrets here (env vars / macOS Keychain only).
+# Everything person- or company-specific belongs ONLY in config.yaml.
+# ================================================================
+
+backend: ax
+poll_interval_sec: 60
+data_dir: ./data
+dry_run: true            # start safe; set false once --show-messages looks right
+
+# Fills {project_description} in the default agent prompt.
+project:
+  name: ''
+  description: 'my-project (e.g. "a TypeScript monorepo")'   # ★
+
+self_chat:
+  # Matches your self-chat window title in Korean '(나)' or English '(You)'.
+  # Narrow it to your own name in config.yaml if you like, e.g. 'Alex Kim \(Alex\)\(나\)'.
+  title_regex: '\(You\)|\(나\)|\(Me\)'
+
+bot_prefix: "🤖 "
+bot_prefixes_detect: ["🤖", "(b)", "[b]", "🍺", "(robot)", ":robot:"]
+
+reply:
+  max_chars: 1500
+  ack_on_start: true
+  announce_start: true
+  report_body_chars: 1200
+  report_body_lines: 20
+  resync_min_interval_sec: 600
+
+agent:
+  type: claude              # claude | pi | codex  (default for plain messages; /agent overrides)
+  workdir: '/Users/me/work/my-project'   # ★ the repo agents work in
+  allowed_roots: ['/Users/me/work']      # ★ workdir must be inside one of these
+  timeout_sec: 1800
+  prompt_via_stdin: true
+  network_allowlist: []      # hosts curl/wget/ssh/scp may reach (guard); empty = deny all
+  hook:
+    enabled: true            # guard hook: claude --settings / codex -c (works under bypass)
+  guard_config: ''           # optional guard.yaml path (schema: hooks/guard.example.yaml)
+  worktrees:
+    enabled: true
+    base_dir: '~/teams-agent-bridge/worktrees'
+    clean_older_than_days: 7
+  claude:
+    executable: claude       # ★ absolute path if not on PATH (e.g. ~/.local/bin/claude)
+    permission_mode: default # or bypassPermissions — the guard hook still enforces safety
+    allowed_tools: []
+    disallowed_tools: []
+    max_turns: 40
+    append_system_prompt: ""
+    extra_args: []
+  codex:
+    executable: codex        # ★ absolute path if not on PATH
+    sandbox: workspace-write
+    network_access: false
+    hooks: true              # PreToolUse guard via -c (codex 0.154+)
+    skip_git_repo_check: false
+    ephemeral: false
+    extra_args: []
+  pi:
+    executable: pi           # ★ absolute path recommended (nvm/bun installs change PATH)
+    mode: json
+    provider: ''             # empty = inherit ~/.pi/agent/settings.json
+    model: ''
+    thinking: ''
+    tools: []
+    exclude_tools: []        # e.g. ['web_*'] to drop network tools
+    skills: []               # optional --skill dirs (e.g. a pstack skills checkout)
+    block_tool_patterns: []
+    allow_unguarded: false
+    append_system_prompt: ''
+    extra_args: []
+
+# AX selectors: leave message_list / compose_box unset to use the built-in
+# Korean+English defaults. Override (whole selector replaced) if yours differ:
+ax:
+  bundle_id: com.microsoft.teams2
+  enable_manual_accessibility: true
+  activate_for_read: false
+  message_strategy: timegroup
+  app_group_subrole: AXApplicationGroup
+  time_group_subrole: AXTimeGroup
+  # message_list: {role: AXGroup, description_re: '^(메시지 목록|Message list)$'}
+  # compose_box:  {role: AXTextArea, description_re: '(메시지\S*\s*입력|Type a message)'}
+  click_compose_box: false
+  max_messages: 40
+  paste_delay_sec: 0.4
+  restore_clipboard: true
+  clear_compose_before_paste: true
+
+roles:
+  enabled: true
+  max_hops: 4
+  chain_timeout_sec: 3600
+  silence_ping_sec: 600
+
+handoff:
+  allowlist: ["dev->qa", "dev->reviewer", "qa->dev"]

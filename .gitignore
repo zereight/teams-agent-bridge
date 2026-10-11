@@ -1,0 +1,27 @@
+# --- personal config & runtime state (never commit) ---
+config.yaml
+data/
+worktrees/
+logs/
+*.log
+*.jsonl
+# private AX tree dumps can contain chat contents
+axtree*.txt
+hooks/guard.yaml
+hooks/guard.json
+
+# --- python ---
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# --- misc ---
+*.bak
+*.zip
+.DS_Store
+node_modules/

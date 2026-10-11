@@ -1,0 +1,11 @@
+[project]
+name = "teams-agent-bridge"
+version = "0.11.0"
+description = "Drive local coding agents (Claude Code, pi, Codex) from your Microsoft Teams self-chat, with a tool-layer safety guard."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+# Runtime deps live in requirements.txt (platform-specific pyobjc/pywinauto).
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
